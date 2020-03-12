@@ -7,5 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Quan",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "mongoose": "^5.9.2",
+    "nodemon": "^2.0.2",
+    "parse-md": "^2.0.4",
+    "q": "^1.5.1",
+    "request": "^2.88.2"
+  }
 }
