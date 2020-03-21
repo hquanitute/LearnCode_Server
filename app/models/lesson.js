@@ -6,7 +6,7 @@ const LessonSchema = new Schema({
     name:{
         type: String
     },
-    dashName:{
+    dashedName:{
         type:String
     },
     isPublished:{

@@ -4,19 +4,39 @@ const readline = require('readline');
 const { google } = require('googleapis');
 var request = require('request');
 const mongoose = require('mongoose');
+
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+const port = process.env.PORT || 5000;
+const mainRouter = require('./app/routers/mainRouter');
+var cors = require('cors')
+app.use(cors()) 
+
+// Route api
+let apiRouter = express.Router(); 
+apiRouter.use('/api',mainRouter);
+app.use('/',cors(), apiRouter);
+
+app.listen(port);
+console.log('App listening on localhost:' + port+"/");
+
 // Connect to database
 let count = 0;
 mongoose.Promise = global.Promise;
 
 function connectDatabase() {
-    // let mongoString = "mongodb://localhost:27017/learncode";
-    let mongoString ="mongodb+srv://admin:admin@kltn-u0aoa.mongodb.net/learncode";
+    let mongoString = "mongodb://localhost:27017/learncode";
+    // let mongoString ="mongodb+srv://admin:admin@kltn-u0aoa.mongodb.net/learncode";
 
     mongoose.connect(mongoString
         , { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
         .then(() => {
             console.log('Connect to database successfully');
-            print(path).catch(console.error);
+            // print(path).catch(console.error);
             // Load client secrets from a local file.
             // fs.readFile('./env/credentials.json', (err, content) => {
             //     if (err) return console.log('Error loading client secret file:', err);
@@ -34,155 +54,118 @@ function connectDatabase() {
 
 connectDatabase();
 
-const Course = require('./app/models/course');
-const Lesson = require('./app/models/lesson');
-const Challenge = require('./app/models/challenge');
+// const Course = require('./app/models/course');
+// const Lesson = require('./app/models/lesson');
+// const Challenge = require('./app/models/challenge');
 
-let path = './data/'
-let i = 0;
-let countNum = 0;
-let count1 =0;
-let count2 =0;
-async function print(path) {
-    const dir = await fs.promises.opendir(path);
-    for await (const dirent of dir) {
-        let course = new Course();
-        course.name = dirent.name;
-        course.dashName = dirent.name;
-        course.save();
-        const dirLessons = await fs.promises.opendir(path + dirent.name);
-        for await (const dirLesson of dirLessons) {
-            let lesson = new Lesson();
-            lesson.name = dirLesson.name;
-            lesson.dashName = dirLesson.name;
-            lesson.save();
-            const listChallenges = await fs.promises.opendir(path + dirent.name + "/" + dirLesson.name)
-            for await (const challengeFile of listChallenges) {
-                const readFileBufer = await fs.promises.readFile(path + dirent.name + "/" + dirLesson.name + "/" + challengeFile.name)
-                // console.log(readFileBufer.toString())
-                try {
+// let path = './data/'
+// let i = 0;
+// let countNum = 0;
+// let count1 =0;
+// let count2 =0;
+// async function print(path) {
+//     const dir = await fs.promises.opendir(path);
+//     for await (const dirent of dir) {
+//         let course = new Course();
+//         course.name = dirent.name;
+//         course.dashName = dirent.name;
+//         course.save();
+//         const dirLessons = await fs.promises.opendir(path + dirent.name);
+//         for await (const dirLesson of dirLessons) {
+//             let lesson = new Lesson();
+//             lesson.name = dirLesson.name;
+//             lesson.dashName = dirLesson.name;
+//             lesson.save();
+//             const listChallenges = await fs.promises.opendir(path + dirent.name + "/" + dirLesson.name)
+//             for await (const challengeFile of listChallenges) {
+//                 const readFileBufer = await fs.promises.readFile(path + dirent.name + "/" + dirLesson.name + "/" + challengeFile.name)
+//                 // console.log(readFileBufer.toString())
+//                 try {
                     
-                    const { metadata, content } = parseMD(readFileBufer.toString())
-                    let contentRemovedKey= "";
-                    if (!content.includes('### Before Test') && !content.includes('### After Test')){
-                        count1++;
-                        contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##");
-                    }
-                    if (content.includes('### Before Test') && !content.includes('### After Test')){
-                        count1++;
-                        contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### Before Test","## Before Test");
-                    }
-                    if (!content.includes('### Before Test') && content.includes('### After Test')){
-                        count1++;
-                        contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### After Test","## After Test");
-                    }
-                    if (content.includes('### Before Test') && content.includes('### After Test')){
-                        count1++;
-                        contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### Before Test","## Before Test").replace("### After Test","## After Test");
-                    }
+//                     const { metadata, content } = parseMD(readFileBufer.toString())
+//                     let contentRemovedKey= "";
+//                     if (!content.includes('### Before Test') && !content.includes('### After Test')){
+//                         count1++;
+//                         contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##");
+//                     }
+//                     if (content.includes('### Before Test') && !content.includes('### After Test')){
+//                         count1++;
+//                         contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### Before Test","## Before Test");
+//                     }
+//                     if (!content.includes('### Before Test') && content.includes('### After Test')){
+//                         count1++;
+//                         contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### After Test","## After Test");
+//                     }
+//                     if (content.includes('### Before Test') && content.includes('### After Test')){
+//                         count1++;
+//                         contentRemovedKey = content.replace("## Description", "##").replace("## Instructions", "##").replace("## Tests", "##").replace("## Challenge Seed", "##").replace("## Solution", "##").replace("### Before Test","## Before Test").replace("### After Test","## After Test");
+//                     }
                     
-                    let arrStringContent = contentRemovedKey.split("##");
-                    // if(arrStringContent.length ==8){
-                    //     console.log(path + dirent.name + "/" + dirLesson.name + "/" + challengeFile.name)
-                    //     count2++;
-                    // }
+//                     let arrStringContent = contentRemovedKey.split("##");
+//                     // if(arrStringContent.length ==8){
+//                     //     console.log(path + dirent.name + "/" + dirLesson.name + "/" + challengeFile.name)
+//                     //     count2++;
+//                     // }
 
-                    let challenge = new Challenge()
-                    challenge.title = metadata.title;
-                    challenge.dashedName = challenge.name;
-                    challenge.block = dirLesson.name;
-                    challenge.superBlock = dirent.name;
-                    challenge.challengeType = metadata.challengeType;
-                    challenge.video = metadata.videoUrl;
-                    challenge.forumTopicId = metadata.forumTopicId;
-                    challenge.description = arrStringContent[1];
-                    challenge.instructions = arrStringContent[2];
-                    challenge.tests = arrStringContent[3];
-                    challenge.challengeSeed = (arrStringContent[4]);
-                    if (!contentRemovedKey.includes('Before Test') && !contentRemovedKey.includes('After Test') && arrStringContent.length == 6) {
-                        challenge.solution =  arrStringContent[5];
-                        challenge.save();
-                        // countNum++;
-                        continue;
-                    }
-                    if (contentRemovedKey.includes('Before Test') && !contentRemovedKey.includes('After Test') && arrStringContent.length == 7) {
-                        challenge.beforeTest =  arrStringContent[5];
-                        challenge.solution =  arrStringContent[6];
-                        challenge.save();
-                        // countNum++;
-                        continue;
-                    }
-                    if (!contentRemovedKey.includes('Before Test') && contentRemovedKey.includes('After Test') && arrStringContent.length == 7) {
-                        challenge.afterTest =  arrStringContent[5];
-                        challenge.solution =  arrStringContent[6];
-                        challenge.save();
-                        // countNum++;
-                        continue;
-                    }
-                    if (contentRemovedKey.includes('Before Test') && contentRemovedKey.includes('After Test') && arrStringContent.length == 8) {
-                        challenge.beforeTest =  arrStringContent[5];
-                        challenge.afterTest =  arrStringContent[6];
-                        challenge.solution =  arrStringContent[7];
-                        challenge.save().then((value,err)=>{
-                            if(err){
-                                console.log(path + dirent.name + "/" + dirLesson.name + "/" + challenge.name)
-                            }
-                        });
-                        countNum++;
-                        continue;
-                    }
+//                     let challenge = new Challenge()
+//                     challenge.title = metadata.title;
+//                     challenge.dashedName = challenge.name;
+//                     challenge.block = dirLesson.name;
+//                     challenge.superBlock = dirent.name;
+//                     challenge.challengeType = metadata.challengeType;
+//                     challenge.video = metadata.videoUrl;
+//                     challenge.forumTopicId = metadata.forumTopicId;
+//                     challenge.description = arrStringContent[1];
+//                     challenge.instructions = arrStringContent[2];
+//                     challenge.tests = arrStringContent[3];
+//                     challenge.challengeSeed = (arrStringContent[4]);
+//                     if (!contentRemovedKey.includes('Before Test') && !contentRemovedKey.includes('After Test') && arrStringContent.length == 6) {
+//                         challenge.solution =  arrStringContent[5];
+//                         challenge.save();
+//                         // countNum++;
+//                         continue;
+//                     }
+//                     if (contentRemovedKey.includes('Before Test') && !contentRemovedKey.includes('After Test') && arrStringContent.length == 7) {
+//                         challenge.beforeTest =  arrStringContent[5];
+//                         challenge.solution =  arrStringContent[6];
+//                         challenge.save();
+//                         // countNum++;
+//                         continue;
+//                     }
+//                     if (!contentRemovedKey.includes('Before Test') && contentRemovedKey.includes('After Test') && arrStringContent.length == 7) {
+//                         challenge.afterTest =  arrStringContent[5];
+//                         challenge.solution =  arrStringContent[6];
+//                         challenge.save();
+//                         // countNum++;
+//                         continue;
+//                     }
+//                     if (contentRemovedKey.includes('Before Test') && contentRemovedKey.includes('After Test') && arrStringContent.length == 8) {
+//                         challenge.beforeTest =  arrStringContent[5];
+//                         challenge.afterTest =  arrStringContent[6];
+//                         challenge.solution =  arrStringContent[7];
+//                         challenge.save().then((value,err)=>{
+//                             if(err){
+//                                 console.log(path + dirent.name + "/" + dirLesson.name + "/" + challenge.name)
+//                             }
+//                         });
+//                         countNum++;
+//                         continue;
+//                     }
 
-                } catch (error) {
-                    console.log(error);
-                    console.log(path + dirent.name + "/" + dirLesson.name + "/" + challenge.name)
-                }
+//                 } catch (error) {
+//                     console.log(error);
+//                     console.log(path + dirent.name + "/" + dirLesson.name + "/" + challenge.name)
+//                 }
 
-            }
-        }
-    }
-    console.log(count2)
-    console.log(count1)
-    console.log(countNum)
-}
+//             }
+//         }
+//     }
+//     console.log(count2)
+//     console.log(count1)
+//     console.log(countNum)
+// }
 // Call function load data from md file
 // print(path).catch(console.error);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // If modifying these scopes, delete token.json.
 // const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -193,6 +176,15 @@ async function print(path) {
 // // created automatically when the authorization flow completes for the first
 // // time.
 // const TOKEN_PATH = 'token.json';
+
+
+
+
+
+
+
+
+
 
 
 
