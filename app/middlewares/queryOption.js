@@ -7,6 +7,10 @@ module.exports = () => {
         if(req.query.skip){
             option.skip=Number(req.query.skip)
         }
+        if(req.query.sort){
+
+            option.sort= req.query.sort
+        }
         req.option=option;
         next();
     }

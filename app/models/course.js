@@ -6,7 +6,7 @@ const courseSchema = new Schema({
     name:{
         type: String
     },
-    dashedName:{
+    dashName:{
         type:String
     },
     isPublished:{

@@ -10,18 +10,19 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+var cors = require('cors')
+app.use(cors()) 
 
 const port = process.env.PORT || 5000;
 const mainRouter = require('./app/routers/mainRouter');
-var cors = require('cors')
-app.use(cors()) 
+
 
 // Route api
 let apiRouter = express.Router(); 
 apiRouter.use('/api',mainRouter);
-app.use('/',cors(), apiRouter);
+app.use('/', apiRouter);
 
-app.listen(port);
+app.listen(port,"127.0.0.1");
 console.log('App listening on localhost:' + port+"/");
 
 // Connect to database
