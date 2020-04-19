@@ -8,8 +8,8 @@ router.post("/", (req, res) => {
     if (req.body.name) {
         lesson.name = req.body.name;
     }
-    if (req.body.dashedName) {
-        lesson.dashedName = req.body.dashedName;
+    if (req.body.dashName) {
+        lesson.dashName = req.body.dashName;
     }
     if (req.body.order) {
         lesson.order = req.body.order;
@@ -30,12 +30,14 @@ router.post("/", (req, res) => {
         });
     })
 }).get("/", option(), (req, res) => {
-    Lesson.find({}, {}, req.option, (err, lesson) => {
-        if (err) {
-            return res.json({ "status": "error", "value": err });
+    Lesson.find({}, {}, req.option).populate('challenges').exec(
+        (err, lesson) => {
+            if (err) {
+                return res.json({ "status": "error", "value": err });
+            }
+            res.json({ "content": lesson })
         }
-        res.json({ "content": lesson })
-    })
+    )
 }).get("/:lessonId", (req, res) => {
     Lesson.findById((req.params.lessonId), (err, lesson) => {
         if (err) {
@@ -51,8 +53,8 @@ router.post("/", (req, res) => {
         if (req.body.name) {
             lesson.name = req.body.name;
         }
-        if (req.body.dashedName) {
-            lesson.dashedName = req.body.dashedName;
+        if (req.body.dashName) {
+            lesson.dashName = req.body.dashName;
         }
         if (req.body.order) {
             lesson.order = req.body.order;
@@ -79,6 +81,52 @@ router.post("/", (req, res) => {
             status:"success",
             value:"Da xoa thanh cong lesson"
           })
+    })
+}).put("/:lessonId/add", (req, res) => {
+    Lesson.findById((req.params.lessonId), (err, lesson) => {
+        console.log("ghe put add lesson")
+        if (err) {
+            return err;
+        }
+        if (req.body.challenge) {
+            lesson.challenges.push(req.body.challenge);
+        }
+        lesson.save((err) => {
+            if (err) {
+                return res.send(err);
+            }
+            // res.json({
+            //     status: "success",
+            //     value: "Da cap nhap course them lesson"
+            // })
+            res.send("fine")
+        });
+    })
+}).put("/:lessonId/remove", (req, res) => {
+    Lesson.findById((req.params.lessonId), (err, lesson) => {
+        if (err) {
+            return err;
+        }
+        if (req.body.challenge) {
+            if (lesson.challenges.includes(req.body.challenge)) {
+                lesson.challenges.remove(req.body.challenge);
+            } else {
+                return res.json({
+                    status: "error",
+                    value: "Khong co challenge nay trong lessons"
+                })
+            }
+        }
+        lesson.save((err) => {
+            if (err) {
+                return res.send(err);
+            }
+            // res.json({
+            //     status: "success",
+            //     value: "Da cap nhap course xoa 1 lesson"
+            // })
+            res.send("fine")
+        });
     })
 })
 
