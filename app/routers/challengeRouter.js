@@ -156,13 +156,35 @@ router.post("/", (req, res) => {
         if (req.body.time) {
             challenge.time = req.body.time;
         }
-        challenge.save((err) => {
+        if (req.body.tests=="") {
+            challenge.tests = req.body.tests;
+        }
+        if (req.body.beforeTest=="") {
+            challenge.beforeTest = req.body.beforeTest;
+        }
+        if (req.body.afterTest=="") {
+            challenge.afterTest = req.body.afterTest;
+        }
+        if (req.body.solutions=="") {
+            challenge.solutions = req.body.solutions;
+        }
+        if (req.body.description=="") {
+            challenge.description = req.body.description;
+        }
+        if (req.body.instructions=="") {
+            challenge.instructions = req.body.instructions;
+        }
+        if (req.body.contents=="") {
+            challenge.contents = req.body.contents;
+        }
+        challenge.save((err, challengeUpdated) => {
             if (err) {
                 return res.send(err);
             }
             res.json({
                 status: "success",
-                value: "Da cap nhap challenge"
+                value: "Da cap nhap challenge",
+                challenge: challengeUpdated
             })
         });
     })
