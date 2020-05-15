@@ -22,7 +22,8 @@ let apiRouter = express.Router();
 apiRouter.use('/api',mainRouter);
 app.use('/', apiRouter);
 
-app.listen(port,"127.0.0.1");
+// app.listen(port,"127.0.0.1");
+app.listen(port);
 console.log('App listening on localhost:' + port+"/");
 
 // Connect to database
@@ -30,8 +31,8 @@ let count = 0;
 mongoose.Promise = global.Promise;
 
 function connectDatabase() {
-    let mongoString = "mongodb://localhost:27017/learncode";
-    // let mongoString ="mongodb+srv://admin:admin@kltn-u0aoa.mongodb.net/learncode";
+    // let mongoString = "mongodb://localhost:27017/learncode";
+    let mongoString ="mongodb+srv://admin:admin@kltn-u0aoa.mongodb.net/learncode";
 
     mongoose.connect(mongoString
         , { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
