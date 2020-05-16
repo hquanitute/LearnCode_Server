@@ -40,7 +40,7 @@ router.post("/", (req, res) => {
     //     }
     //     res.json({ "content": course })
     // })
-    Course.find({}, {}, req.option).populate('lessons').exec(
+    Course.find({}, {}, req.option).populate({path:'lessons',populate:{path:'challenges'}}).exec(
         (err, course) => {
             if (err) {
                 return res.json({ "status": "error", "value": err });
