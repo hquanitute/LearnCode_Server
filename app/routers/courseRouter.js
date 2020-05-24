@@ -34,12 +34,15 @@ router.post("/", (req, res) => {
         });
     })
 }).get("/", option(), (req, res) => {
-    // Course.find({}, {}, req.option, (err, course) => {
-    //     if (err) {
-    //         return res.json({ "status": "error", "value": err });
-    //     }
-    //     res.json({ "content": course })
-    // })
+    Course.find({}, {}, req.option).populate({path:'lessons', populate:{path:'challenges', options: { sort: { 'challengeOrder': 1 }} }, options: { sort: { 'order': 1 } }}).exec(
+        (err, course) => {
+            if (err) {
+                return res.json({ "status": "error", "value": err });
+            }
+            res.json({ "content": course })
+        }
+    )
+}).get("/getPublished", option(), (req, res) => {
     Course.find({"isPublished":true}, {}, req.option).populate({path:'lessons',match: { "isPublished": true }, populate:{path:'challenges', match: { "isPublished": true }, options: { sort: { 'challengeOrder': 1 }} }, options: { sort: { 'order': 1 } }}).exec(
         (err, course) => {
             if (err) {
