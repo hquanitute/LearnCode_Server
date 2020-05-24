@@ -40,7 +40,7 @@ router.post("/", (req, res) => {
     //     }
     //     res.json({ "content": course })
     // })
-    Course.find({}, {}, req.option).populate({path:'lessons',populate:{path:'challenges', options: { sort: { 'challengeOrder': 1 }} }, options: { sort: { 'order': 1 } }}).exec(
+    Course.find({"isPublished":true}, {}, req.option).populate({path:'lessons',match: { "isPublished": true }, populate:{path:'challenges', match: { "isPublished": true }, options: { sort: { 'challengeOrder': 1 }} }, options: { sort: { 'order': 1 } }}).exec(
         (err, course) => {
             if (err) {
                 return res.json({ "status": "error", "value": err });
