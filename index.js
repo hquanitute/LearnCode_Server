@@ -1,3 +1,4 @@
+require('dotenv').config();
 const parseMD = require('parse-md').default;
 const fs = require('fs');
 const readline = require('readline');
@@ -15,12 +16,13 @@ app.use(cors())
 
 const port = process.env.PORT || 5000;
 const mainRouter = require('./app/routers/mainRouter');
-
-
+const auth =require('./app/auth/auth.router')
+console.log(process.env.CLIENT_ID)
 // Route api
 let apiRouter = express.Router(); 
 apiRouter.use('/api',mainRouter);
 app.use('/', apiRouter);
+auth(app);
 
 // app.listen(port,"127.0.0.1");
 app.listen(port);
