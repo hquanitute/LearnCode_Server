@@ -1,11 +1,13 @@
+const express = require('express');
+
+const {authCheck} = require('../middlewares/authCheck')
 const challenge = require('./challengeRouter');
 const course = require('./courseRouter');
 const lesson = require('./lessonRouter');
 
-const express = require('express');
 var router = express.Router();
-router.use('/challenges',challenge);
-router.use('/courses',course);
-router.use('/lessons',lesson);
+router.use('/challenges', authCheck, challenge);
+router.use('/courses', authCheck, course);
+router.use('/lessons', authCheck, lesson);
 
 module.exports = router;

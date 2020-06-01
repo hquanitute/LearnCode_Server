@@ -5,6 +5,7 @@ const readline = require('readline');
 const { google } = require('googleapis');
 var request = require('request');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const express = require('express');
 const app = express();
@@ -17,13 +18,26 @@ app.use(cors())
 const port = process.env.PORT || 5000;
 const mainRouter = require('./app/routers/mainRouter');
 const auth =require('./app/auth/auth.router')
-console.log(process.env.CLIENT_ID)
+
+app.use(require('express-session')({
+    secret: process.env.cookieSecret || "cookieSecret",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        "maxAge": 1000*60*60*24
+    }
+  }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Route api
 let apiRouter = express.Router(); 
 apiRouter.use('/api',mainRouter);
 app.use('/', apiRouter);
 auth(app);
-
+app.get('/',(req,res) => {
+    res.send("login required");
+})
 // app.listen(port,"127.0.0.1");
 app.listen(port);
 console.log('App listening on localhost:' + port+"/");
