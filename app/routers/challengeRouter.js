@@ -84,15 +84,17 @@ router.post("/", (req, res) => {
     Challenge.find({}, {}, req.option, (err, challenge) => {
         if (err) {
             return res.json({ "status": "error", "value": err });
+        }else{
+            return res.json({ "content": challenge })
         }
-        return res.json({ "content": challenge })
     })
 }).get("/:challengeId", (req, res) => {
     Challenge.findById((req.params.challengeId), (err, challenge) => {
         if (err) {
             return res.json({ "status": "error", "value": err });
+        } else {
+            return res.json({ "content": challenge })
         }
-        return res.json({ "content": challenge })
     })
 }).put("/:challengeId", (req, res) => {
     Challenge.findById((req.params.challengeId), (err, challenge) => {
