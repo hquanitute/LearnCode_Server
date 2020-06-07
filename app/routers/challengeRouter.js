@@ -70,12 +70,12 @@ router.post("/", (req, res) => {
     }
     Challenge.create(challenge).then((challengeCreated, err) => {
         if (err) {
-            return res.json({
+            res.json({
                 status: "error",
                 value: err
             });
         }
-        return res.json({
+        res.json({
             status: "success",
             value: "Them challenge thanh cong"
         });
@@ -83,17 +83,17 @@ router.post("/", (req, res) => {
 }).get("/", option(), (req, res) => {
     Challenge.find({}, {}, req.option, (err, challenge) => {
         if (err) {
-            return res.json({ "status": "error", "value": err });
+            res.json({ "status": "error", "value": err });
         }else{
-            return res.json({ "content": challenge })
+            res.json({ "content": challenge })
         }
     })
 }).get("/:challengeId", (req, res) => {
     Challenge.findById((req.params.challengeId), (err, challenge) => {
         if (err) {
-            return res.json({ "status": "error", "value": err });
+            res.json({ "status": "error", "value": err });
         } else {
-            return res.json({ "content": challenge })
+            res.json({ "content": challenge })
         }
     })
 }).put("/:challengeId", (req, res) => {
@@ -187,7 +187,7 @@ router.post("/", (req, res) => {
         }
         challenge.save((err, challengeUpdated) => {
             if (err) {
-                return res.send(err);
+                res.send(err);
             }
             res.json({
                 status: "success",
@@ -199,9 +199,9 @@ router.post("/", (req, res) => {
 }).delete("/:challengeId", (req, res) => {
     Challenge.deleteOne({ _id: req.params.challengeId }, (err) => {
         if (err) {
-            return res.send(err);
+            res.send(err);
         }
-        return res.json({
+        res.json({
             status: "success",
             value: "Da xoa thanh cong challenge"
         })
