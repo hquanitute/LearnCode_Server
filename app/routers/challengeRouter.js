@@ -85,14 +85,14 @@ router.post("/", (req, res) => {
         if (err) {
             return res.json({ "status": "error", "value": err });
         }
-        res.json({ "content": challenge })
+        return res.json({ "content": challenge })
     })
 }).get("/:challengeId", (req, res) => {
     Challenge.findById((req.params.challengeId), (err, challenge) => {
         if (err) {
             return res.json({ "status": "error", "value": err });
         }
-        res.json({ "content": challenge })
+        return res.json({ "content": challenge })
     })
 }).put("/:challengeId", (req, res) => {
     Challenge.findById((req.params.challengeId), (err, challenge) => {
@@ -199,7 +199,7 @@ router.post("/", (req, res) => {
         if (err) {
             return res.send(err);
         }
-        res.json({
+        return res.json({
             status: "success",
             value: "Da xoa thanh cong challenge"
         })
