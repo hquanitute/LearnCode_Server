@@ -65,6 +65,9 @@ router.post("/", (req, res) => {
     if (req.body.time) {
         challenge.time = req.body.time;
     }
+    if (req.body.runResult){
+        challenge.runResult = req.body.runResult;
+    }
     Challenge.create(challenge).then((challengeCreated, err) => {
         if (err) {
             return res.json({
@@ -176,6 +179,9 @@ router.post("/", (req, res) => {
         }
         if (req.body.contents=="") {
             challenge.contents = req.body.contents;
+        }
+        if(req.body.runResult){
+            challenge.runResult = req.body.runResult;
         }
         challenge.save((err, challengeUpdated) => {
             if (err) {

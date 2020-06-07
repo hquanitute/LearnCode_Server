@@ -81,6 +81,10 @@ const challengeSchema = new Schema({
     time:{
         type:Number,
         default:30
+    },
+    runResult:{
+        type:String,
+        default:""
     }
 });
 
