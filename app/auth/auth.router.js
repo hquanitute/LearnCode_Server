@@ -1,3 +1,4 @@
+var jwt = require('jsonwebtoken');
 const {passport} = require('./passport.config');
 
 module.exports = (app) => {
@@ -6,7 +7,8 @@ module.exports = (app) => {
 
     app.get('/auth/google/callback',
         passport.authenticate('google', { failureRedirect: '/login' }),
-        function (req, res) {
-            res.redirect('/login');
+        function (req, res) {            
+            let token = jwt.sign(JSON.parse(JSON.stringify(req.user)), process.env.CLIENT_SECRET, { expiresIn: 60 * 60 * 24 })
+            res.redirect('http://localhost:3000/verifyLogin?token=' + token);
         });
 }
