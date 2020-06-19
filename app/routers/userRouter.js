@@ -72,13 +72,13 @@ router.post("/", (req, res) => {
         if (req.body.role) {
             user.role = req.body.role;
         }
-        user.save((err) => {
+        user.save((err,userUpdated) => {
             if (err) {
                 return res.send(err);
             }
             res.json({
                 status: "success",
-                value: "Da cap nhap lesson"
+                value: userUpdated
             })
         });
     })
