@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
         topic.challengeId = req.body.challengeId;
     }
     if (req.body.content) {
-        topic.username = req.body.username;
+        topic.content = req.body.content;
     }
     if (req.body.comments) {
         topic.comments = req.body.comments;
@@ -22,6 +22,9 @@ router.post("/", (req, res) => {
     }
     if (req.body.type) {
         topic.type = req.body.type;
+    }
+    if (req.body.userId) {
+        topic.userId = req.body.userId;
     }
     Topic.create(topic).then((topicCreated, err) => {
         if (err) {
@@ -36,15 +39,35 @@ router.post("/", (req, res) => {
         });
     })
 }).get("/", option(), (req, res) => {
-    Topic.find({}, {}, req.option)
-    .exec(
-        (err, topics) => {
-            if (err) {
-                return res.json({ "status": "error", "value": err });
-            }
-            res.json({ "content": topics })
-        }
-    )
+    let listTags = [];
+    if (req.query.tags == undefined || req.query.tags == "") {
+        Topic.find({}, {}, req.option)
+            .exec(
+                (err, topics) => {
+                    if (err) {
+                        return res.json({ "status": "error", "value": err });
+                    }
+                    console.log(topics);
+
+                    res.json({ "content": topics })
+                }
+            )
+    } else {
+        console.log(req.query.tags);
+        
+        listTags = req.query.tags.split('~') || [];
+        Topic.find({ tags: listTags[0] }, {}, req.option)
+            .exec(
+                (err, topics) => {
+                    if (err) {
+                        return res.json({ "status": "error", "value": err });
+                    }
+                    console.log(topics);
+
+                    res.json({ "content": topics })
+                }
+            )
+    }
 }).get("/:topicId", (req, res) => {
     Topic.findById((req.params.topicId), (err, topic) => {
         if (err) {
@@ -75,7 +98,7 @@ router.post("/", (req, res) => {
         if (req.body.type) {
             topic.type = req.body.type;
         }
-        topic.save((err,topicUpdated) => {
+        topic.save((err, topicUpdated) => {
             if (err) {
                 return res.send(err);
             }
@@ -85,15 +108,15 @@ router.post("/", (req, res) => {
             })
         });
     })
-}).delete("/:topicId",(req, res)=>{
-    User.deleteOne({_id:req.params.topicId},(err)=>{
-        if(err){
+}).delete("/:topicId", (req, res) => {
+    User.deleteOne({ _id: req.params.topicId }, (err) => {
+        if (err) {
             return res.send(err);
-          }
-          res.json({
-            status:"success",
-            value:"Da xoa thanh cong lesson"
-          })
+        }
+        res.json({
+            status: "success",
+            value: "Da xoa thanh cong lesson"
+        })
     })
 })
 
