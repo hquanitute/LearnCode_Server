@@ -45,7 +45,7 @@ router.post("/", (req, res) => {
             .exec(
                 (err, topics) => {
                     if (err) {
-                        return res.json({ "status": "error", "value": err });
+                        return res.status(404).json({ "status": "error", "value": err });
                     }
                     console.log(topics);
 
@@ -71,7 +71,7 @@ router.post("/", (req, res) => {
 }).get("/:topicId", (req, res) => {
     Topic.findById((req.params.topicId), (err, topic) => {
         if (err) {
-            return res.json({ "status": "error", "value": err });
+            return res.status(404).json({ "status": "error", "value": err });
         }
         res.json({ "content": topic })
     })
