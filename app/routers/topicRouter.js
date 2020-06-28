@@ -26,18 +26,12 @@ router.post("/", (req, res) => {
     if (req.body.userId) {
         topic.userId = req.body.userId;
     }
-    Topic.create(topic).then((topicCreated, err) => {
-        if (err) {
-            return res.json({
-                status: "error",
-                value: err
-            });
-        }
-        return res.json({
+    Topic.create(topic).then((topicCreated) => {
+        res.json({
             status: "success",
             value: topicCreated
         });
-    })
+    }).catch( err => res.status(400).send(new Error('Create topic failed!')));
 }).get("/", option(), (req, res) => {
     let listTags = [];
     if (req.query.tags == undefined || req.query.tags == "") {
@@ -47,14 +41,10 @@ router.post("/", (req, res) => {
                     if (err) {
                         return res.status(404).json({ "status": "error", "value": err });
                     }
-                    console.log(topics);
-
                     res.json({ "content": topics })
                 }
             )
     } else {
-        console.log(req.query.tags);
-        
         listTags = req.query.tags.split('~') || [];
         Topic.find({ tags: listTags[0] }, {}, req.option)
             .exec(
@@ -62,21 +52,20 @@ router.post("/", (req, res) => {
                     if (err) {
                         return res.json({ "status": "error", "value": err });
                     }
-                    console.log(topics);
-
                     res.json({ "content": topics })
                 }
             )
     }
 }).get("/:topicId", (req, res) => {
-    Topic.findById((req.params.topicId), (err, topic) => {
-        if (err) {
-            return res.status(404).json({ "status": "error", "value": err });
-        }
-        res.json({ "content": topic })
-    })
+    Topic.findById((req.params.topicId), {}, {}).populate('userId')
+        .exec((err, topic) => {
+            if (err) {
+                return res.status(404).json({ "status": "error", "value": err });
+            }            
+            res.json({ "content": topic })
+        })
 }).put("/:topicId", (req, res) => {
-    Topic.findById((req.params.topicId), (err, topic) => {
+    Topic.findById((req.params.topicId)).populate('userId').exec( (err, topic) => {
         if (err) {
             return err;
         }
@@ -87,7 +76,7 @@ router.post("/", (req, res) => {
             topic.challengeId = req.body.challengeId;
         }
         if (req.body.content) {
-            topic.username = req.body.username;
+            topic.content = req.body.content;
         }
         if (req.body.comments) {
             topic.comments = req.body.comments;
@@ -100,7 +89,7 @@ router.post("/", (req, res) => {
         }
         topic.save((err, topicUpdated) => {
             if (err) {
-                return res.send(err);
+                return res.status(400).send(err);
             }
             res.json({
                 status: "success",
@@ -109,7 +98,7 @@ router.post("/", (req, res) => {
         });
     })
 }).delete("/:topicId", (req, res) => {
-    User.deleteOne({ _id: req.params.topicId }, (err) => {
+    Topic.deleteOne({ _id: req.params.topicId }, (err) => {
         if (err) {
             return res.send(err);
         }

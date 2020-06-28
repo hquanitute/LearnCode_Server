@@ -16,6 +16,7 @@ const TopicSchema = new Schema({
     comments : [{type: String , default:[]}],
     tags : [{type: String , default:[]}],
     type : {type: String},
+    timestamp : {type: Number, default: new Date().getTime()},
 });
 
 TopicSchema.pre('save', function(next){
