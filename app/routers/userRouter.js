@@ -72,6 +72,9 @@ router.post("/", (req, res) => {
         if (req.body.role) {
             user.role = req.body.role;
         }
+        if (req.body.listChallengeIdPassed) {
+            user.listChallengeIdPassed = req.body.listChallengeIdPassed;
+        }
         user.save((err,userUpdated) => {
             if (err) {
                 return res.send(err);

@@ -15,8 +15,8 @@ const challengeSchema = new Schema({
         default:null
     },
     forumTopicId:{
-        type: Number,
-        default:-1
+        type: String,
+        default:''
     },
     tests:{
         type: String,

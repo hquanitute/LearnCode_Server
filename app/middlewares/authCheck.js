@@ -1,6 +1,5 @@
 module.exports.authCheck = (req,res,next) => {
     if(process.env.mode =='DEV'){
-        console.log("abc");
         next();
         //if not use if else if =>>>> after next() must have return
     }
