@@ -57,7 +57,7 @@ router.post("/", (req, res) => {
             )
     }
 }).get("/:topicId", (req, res) => {
-    Topic.findById((req.params.topicId), {}, {}).populate('userId')
+    Topic.findById((req.params.topicId), {}, {}).populate('userId').populate('commentsObject')
         .exec((err, topic) => {
             if (err) {
                 return res.status(404).json({ "status": "error", "value": err });

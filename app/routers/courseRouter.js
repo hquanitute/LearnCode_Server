@@ -110,22 +110,16 @@ router.post("/", (req, res) => {
     })
 }).put("/:courseId/add", (req, res) => {
     Course.findById((req.params.courseId), (err, course) => {
-        console.log("ghe put add")
         if (err) {
             return err;
         }
         if (req.body.lesson) {
-            console.log("ghe put add: ", req.body.lesson)
             course.lessons.push(req.body.lesson);
         }
         course.save((err) => {
             if (err) {
                 return res.send(err);
             }
-            // res.json({
-            //     status: "success",
-            //     value: "Da cap nhap course them lesson"
-            // })
             res.send("fine")
         });
     })
@@ -148,10 +142,6 @@ router.post("/", (req, res) => {
             if (err) {
                 return res.send(err);
             }
-            // res.json({
-            //     status: "success",
-            //     value: "Da cap nhap course xoa 1 lesson"
-            // })
             res.send("fine")
         });
     })

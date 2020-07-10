@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Challenge = require('./challenge')
 const User = require('./user');
+const CommentObject = require('./comment')
 
 const TopicSchema = new Schema({
     name:{
@@ -16,6 +17,7 @@ const TopicSchema = new Schema({
     comments : [{type: String , default:[]}],
     tags : [{type: String , default:[]}],
     type : {type: String},
+    commentsObject : [{type:  mongoose.Schema.Types.ObjectId, ref: CommentObject}],
     timestamp : {type: Number, default: new Date().getTime()},
 });
 
