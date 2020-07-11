@@ -14,10 +14,9 @@ const TopicSchema = new Schema({
         type:String,
         default:''
     },
-    comments : [{type: String , default:[]}],
     tags : [{type: String , default:[]}],
     type : {type: String},
-    commentsObject : [{type:  mongoose.Schema.Types.ObjectId, ref: CommentObject}],
+    commentsObject : [{type:  mongoose.Schema.Types.ObjectId, ref: CommentObject, default:[]}],
     timestamp : {type: Number, default: new Date().getTime()},
 });
 

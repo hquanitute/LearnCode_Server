@@ -9,7 +9,7 @@ const CommentObject = new Schema({
         type:String,
         default:''
     },
-    likeNumber:{type:Number, default:0},
+    likePeople:[{type: mongoose.Schema.Types.ObjectId, ref: User}],
     timestamp : {type: Number, default: new Date().getTime()},
 });
 

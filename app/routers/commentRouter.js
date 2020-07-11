@@ -12,12 +12,13 @@ router.post("/", (req, res) => {
     if (req.body.content) {
         comment.content = req.body.content;
     }
-    CommentObject.create(comment).then((commentCreated) => {
+    CommentObject.create(comment).then((commentCreated) => {        
         Topic.findById(req.body.topicId).populate('userId').then((topic) => {
-            topic.commentsObject.push(commentCreated._id)
+            topic.commentsObject = [commentCreated._id]
+            
             let promiseSave = topic.save();
             promiseSave.then(topicUpdated => {
-                let topicUpdatedPopulatedPromised = topicUpdated.populate({ path: 'commentsObject', options: { sort: { 'likeNumber': -1 } } }).execPopulate();
+                let topicUpdatedPopulatedPromised = topicUpdated.populate({ path: 'commentsObject' }).execPopulate();
                 topicUpdatedPopulatedPromised.then((topicUpdatedPopulated) => {
                     res.status(200).json({
                         status: "success",
@@ -37,8 +38,11 @@ router.post("/", (req, res) => {
         if (err) {
             return err;
         }
-        if (req.body.likeNumber) {
-            comment.likeNumber = req.body.likeNumber;
+        if(!comment){
+            return res.status(400).send("Not found comment");
+        }
+        if (req.body.likePeople) {
+            comment.likePeople = req.body.likePeople;
         }
         if (req.body.content) {
             comment.content = req.body.content;
@@ -63,8 +67,6 @@ router.post("/", (req, res) => {
         ({ commentsObject: req.params.commentId }).exec();
         promised.then(topic => {
             topic.commentsObject.splice(topic.commentsObject.indexOf(req.params.commentId));
-            console.log(topic.commentsObject);
-            
             let saveEnvet = topic.save();
             saveEnvet.then(() =>{
                 res.json({

@@ -14,9 +14,6 @@ router.post("/", (req, res) => {
     if (req.body.content) {
         topic.content = req.body.content;
     }
-    if (req.body.comments) {
-        topic.comments = req.body.comments;
-    }
     if (req.body.tags) {
         topic.tags = req.body.tags;
     }
@@ -77,9 +74,6 @@ router.post("/", (req, res) => {
         }
         if (req.body.content) {
             topic.content = req.body.content;
-        }
-        if (req.body.comments) {
-            topic.comments = req.body.comments;
         }
         if (req.body.tags) {
             topic.tags = req.body.tags;

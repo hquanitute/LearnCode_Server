@@ -4,7 +4,6 @@ module.exports.authCheck = (req,res,next) => {
         //if not use if else if =>>>> after next() must have return
     }
     else if(req.user){
-        console.log("drf");
         next();
     } else {
         // res.redirect('/');
