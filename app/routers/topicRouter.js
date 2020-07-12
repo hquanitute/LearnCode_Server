@@ -58,7 +58,8 @@ router.post("/", (req, res) => {
         .exec((err, topic) => {
             if (err) {
                 return res.status(404).json({ "status": "error", "value": err });
-            }            
+            }
+            topic.commentsObject.sort((a,b) => b.likePeople.length - a.likePeople.length)        
             res.json({ "content": topic })
         })
 }).put("/:topicId", (req, res) => {

@@ -4,7 +4,11 @@ const CommentObject = require('../models/comment')
 
 var router = express.Router();
 
-router.post("/", (req, res) => {
+router.get("/", (req, res) => {
+    CommentObject.find().then((comment) => {
+        res.status(200).json(comment.sort((a,b) => b.likePeople.length - a.likePeople.length));
+    })
+}).post("/", (req, res) => {
     let comment = new CommentObject();
     if (req.body.userId) {
         comment.userId = req.body.userId;
@@ -14,12 +18,15 @@ router.post("/", (req, res) => {
     }
     CommentObject.create(comment).then((commentCreated) => {        
         Topic.findById(req.body.topicId).populate('userId').then((topic) => {
-            topic.commentsObject = [commentCreated._id]
+            topic.commentsObject.push(commentCreated._id);
             
             let promiseSave = topic.save();
             promiseSave.then(topicUpdated => {
                 let topicUpdatedPopulatedPromised = topicUpdated.populate({ path: 'commentsObject' }).execPopulate();
                 topicUpdatedPopulatedPromised.then((topicUpdatedPopulated) => {
+                    console.log(topicUpdatedPopulated);
+                    
+                    topicUpdatedPopulated.commentsObject.sort((a,b) => b.likePeople.length - a.likePeople.length)
                     res.status(200).json({
                         status: "success",
                         value: topicUpdatedPopulated
@@ -66,7 +73,7 @@ router.post("/", (req, res) => {
         let promised = Topic.findOne
         ({ commentsObject: req.params.commentId }).exec();
         promised.then(topic => {
-            topic.commentsObject.splice(topic.commentsObject.indexOf(req.params.commentId));
+            topic.commentsObject.splice(topic.commentsObject.indexOf(req.params.commentId),1);
             let saveEnvet = topic.save();
             saveEnvet.then(() =>{
                 res.json({
