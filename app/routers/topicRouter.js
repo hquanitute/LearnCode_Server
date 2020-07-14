@@ -54,12 +54,35 @@ router.post("/", (req, res) => {
             )
     }
 }).get("/:topicId", (req, res) => {
-    Topic.findById((req.params.topicId), {}, {}).populate('userId').populate('commentsObject')
+    Topic.findById((req.params.topicId), {}, {}).
+        populate('userId').
+        populate(
+            {
+                path: 'commentsObject',
+                populate: { path:"userId" }
+            }
+        )
         .exec((err, topic) => {
             if (err) {
                 return res.status(404).json({ "status": "error", "value": err });
             }
             topic.commentsObject.sort((a,b) => b.likePeople.length - a.likePeople.length)        
+            res.json({ "content": topic })
+        })
+}).get("/commentsOnly/:topicId", (req, res) => {
+    Topic.findById((req.params.topicId), 'userId commentsObject', {}).
+        populate('userId').
+        populate(
+            {
+                path: 'commentsObject',
+                populate: { path:"userId" }
+            }
+        )
+        .exec((err, topic) => {
+            if (err) {
+                return res.status(404).json({ "status": "error", "value": err });
+            }
+            topic.commentsObject.sort((a,b) => b.likePeople.length - a.likePeople.length)
             res.json({ "content": topic })
         })
 }).put("/:topicId", (req, res) => {
