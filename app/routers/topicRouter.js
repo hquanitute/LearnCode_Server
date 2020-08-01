@@ -29,27 +29,52 @@ router.post("/", (req, res) => {
             value: topicCreated
         });
     }).catch( err => res.status(400).send(new Error('Create topic failed!')));
-}).get("/", option(), (req, res) => {
+}).get("/", option(), async(req, res) => {
     let listTags = [];
+   
     if (req.query.tags == undefined || req.query.tags == "") {
+        const numTopic = await Topic.countDocuments().exec();
+        let max_page = numTopic / req.query.limit + 1;
+        if (Math.floor(numTopic / req.query.limit) === numTopic / req.query.limit) {
+            max_page = numTopic / req.query.limit;
+        } else {
+            max_page = Math.floor( max_page)
+        }
+        const pagination = {
+            "current_page": Math.floor(req.query.skip/req.query.limit+1),
+            "max_page": max_page,
+            "total": numTopic
+        }
         Topic.find({}, {}, req.option)
             .exec(
                 (err, topics) => {
                     if (err) {
                         return res.status(404).json({ "status": "error", "value": err });
                     }
-                    res.json({ "content": topics })
+                    res.json({ "content": topics, "pagination": pagination })
                 }
             )
     } else {
         listTags = req.query.tags.split('~') || [];
+        const numTopic = await Topic.countDocuments({ tags: listTags[0] }, null).exec();
+        let max_page = numTopic / req.query.limit + 1;
+        if (Math.floor(numTopic / req.query.limit) === numTopic / req.query.limit) {
+            max_page = numTopic / req.query.limit;
+        } else {
+            max_page = Math.floor( max_page)
+        }
+        const pagination = {
+            "current_page": Math.floor(req.query.skip/req.query.limit+1),
+            "max_page": max_page,
+            "total": numTopic
+        }
         Topic.find({ tags: listTags[0] }, {}, req.option)
             .exec(
                 (err, topics) => {
                     if (err) {
                         return res.json({ "status": "error", "value": err });
                     }
-                    res.json({ "content": topics })
+                    res.json({ "content": topics, "pagination": pagination });
                 }
             )
     }
