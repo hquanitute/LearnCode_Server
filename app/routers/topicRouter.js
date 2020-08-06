@@ -46,6 +46,7 @@ router.post("/", (req, res) => {
             "total": numTopic
         }
         Topic.find({}, {}, req.option)
+            .populate({path:'userId', select:'name avater'})
             .exec(
                 (err, topics) => {
                     if (err) {
@@ -69,6 +70,7 @@ router.post("/", (req, res) => {
             "total": numTopic
         }
         Topic.find({ tags: listTags[0] }, {}, req.option)
+            .populate({path:'userId', select:'name avater'})
             .exec(
                 (err, topics) => {
                     if (err) {
